@@ -1,0 +1,11 @@
+{
+  "cookie": {
+    "originalMaxAge": 60000,
+    "expires": "2023-11-07T19:16:36.265Z",
+    "httpOnly": true,
+    "path": "/"
+  },
+  "__lastAccess": 1699384536265,
+  "name": "Ramiro",
+  "email": "resiliencia.ramirotevez@gmail.com"
+}
