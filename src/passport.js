@@ -73,9 +73,9 @@ passport.use(
       clientSecret: "11d1ed499874e32ae49057ead0e59b1f9347583f",
       callbackURL: "http://localhost:8080/api/sessions/callback",
     },
-    async (profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       try {
-        const userDB = usersManager.findByEmail(profile._json.email);
+        const userDB = await usersManager.findByEmail(profile._json.email);
 
         //login
 
@@ -97,7 +97,7 @@ passport.use(
           isGitHub: true,
         };
         const createdUSER = await usersManager.createOne(infoUser);
-        return done(null, createdUSER);
+        done(null, createdUSER);
       } catch (error) {
         done(error);
       }

@@ -26,8 +26,8 @@ router.get("/profile", (req, res) => {
     return res.redirect("/login");
   }
 
-  const { first_name, email } = req.user;
-  res.render("profile", { user: { first_name, email } });
+  const { first_name, email, role } = req.user;
+  res.render("profile", { user: { first_name, email, role } });
 });
 
 router.get("/reset", (req, res) => {

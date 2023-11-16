@@ -59,7 +59,7 @@ const router = Router();
 
 router.post(
   "/signup",
-  passport.authenticate("signup", { successRedirect: "/login" })
+  passport.authenticate("signup", { successRedirect: "/profile" })
 );
 router.post(
   "/login",
