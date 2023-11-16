@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  isGitHub: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const usersModel = mongoose.model("users", userSchema);

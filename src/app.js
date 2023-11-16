@@ -6,26 +6,17 @@ import viewsRouter from "./routes/views.router.js";
 import cookieRouter from "./routes/cookie.router.js";
 import sessionsRouter from "./routes/session.router.js";
 import session from "express-session";
-import FileStore from "session-file-store";
+
 import "./db/configDB.js";
 import MongoStore from "connect-mongo";
+import "./passport.js";
+import passport from "passport";
 
-const fileStore = FileStore(session);
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser("secretCookie"));
-
-//session
-//file
-/* app.use(
-  session({
-    store: new fileStore({ path: __dirname + "/sessions" }),
-    secret: "secretSession",
-    cookie: { maxAge: 60000 },
-  })
-); */
 
 const URI =
   "mongodb+srv://iAmRamiro:lafamilia123@cluster0.q4vycww.mongodb.net/session47315?retryWrites=true&w=majority";
@@ -38,6 +29,10 @@ app.use(
     cookie: { maxAge: 60000 },
   })
 );
+
+//passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 //handlebars
 app.engine("handlebars", handlebars.engine());
