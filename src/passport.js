@@ -3,6 +3,8 @@ import { usersManager } from "./managers/usersManager.js";
 import { Strategy as LocalStrategy } from "passport-local";
 import { hashData, compareData } from "./utils.js";
 import { Strategy as GithubStrategy } from "passport-github2";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as JWTStrategy } from "passport-jwt";
 
 //crear estrategias local
 passport.use(
@@ -33,9 +35,9 @@ passport.use(
   "login",
   new LocalStrategy(
     { usernameField: "email", passReqToCallback: true },
-    async (email, password, done) => {
+    async (req, email, password, done) => {
       if (!email || !password) {
-        done(null, false);
+        return done(null, false);
       }
 
       try {
@@ -98,6 +100,71 @@ passport.use(
         };
         const createdUSER = await usersManager.createOne(infoUser);
         done(null, createdUSER);
+      } catch (error) {
+        done(error);
+      }
+    }
+  )
+);
+
+//google
+
+passport.use(
+  "google",
+  new GoogleStrategy(
+    {
+      clientID:
+        "699876434350-6kouohm9s40794r366b70q1jp0t4kin2.apps.googleusercontent.com",
+      clientSecret: "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",
+      callbackURL: "http://localhost:8080/api/sessions/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const userDB = await usersManager.findByEmail(profile._json.email);
+
+        //login
+
+        if (userDB) {
+          if (userDB.isGoogle) {
+            return done(null, userDB);
+          } else {
+            return done(null, false);
+          }
+        }
+
+        //signup
+
+        const infoUser = {
+          first_name: profile._json.given_name,
+          last_name: profile._json.family_name,
+          email: profile._json.email,
+          password: " ",
+          isGoogle: true,
+        };
+        const createdUSER = await usersManager.createOne(infoUser);
+        done(null, createdUSER);
+      } catch (error) {
+        done(error);
+      }
+    }
+  )
+);
+
+const fromCookies = (req) => {
+  return req.cookies.token;
+};
+
+//jwt
+
+passport.use(
+  "jwt",
+  new JWTStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: "secretJWT",
+    },
+    async (jwt_payload, done) => {
+      try {
       } catch (error) {
         done(error);
       }

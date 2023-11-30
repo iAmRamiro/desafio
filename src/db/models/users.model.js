@@ -26,6 +26,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+
+  isGoogle: {
+    type: Boolean,
+    default: false,
+  },
+
+  role: {
+    type: String,
+    enum: ["ADMIN", "PREMIUM", "CLIENT"],
+    default: "CLIENT",
+  },
 });
 
 export const usersModel = mongoose.model("users", userSchema);

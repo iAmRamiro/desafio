@@ -5,6 +5,7 @@ import { __dirname } from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
 import cookieRouter from "./routes/cookie.router.js";
 import sessionsRouter from "./routes/session.router.js";
+import usersRouter from "./routes/users.router.js";
 import session from "express-session";
 
 import "./db/configDB.js";
@@ -42,6 +43,7 @@ app.set("view engine", "handlebars");
 app.use("/", viewsRouter);
 app.use("/api/cookie", cookieRouter);
 app.use("/api/sessions", sessionsRouter);
+app.use("/api/users", usersRouter);
 
 /* app.get("/crear", (req, res) => {
   res
