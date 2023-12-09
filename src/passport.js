@@ -4,7 +4,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { hashData, compareData } from "./utils.js";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as JWTStrategy } from "passport-jwt";
+import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
+import { generateToken } from "./utils.js";
 
 //crear estrategias local
 passport.use(
@@ -12,17 +13,19 @@ passport.use(
   new LocalStrategy(
     { passReqToCallback: true, usernameField: "email" },
     async (req, email, password, done) => {
-      const { first_name, last_name } = req.body;
+      const { first_name, last_name, age } = req.body;
 
-      if (!first_name || !last_name || !email || !password) {
+      if (!first_name || !last_name || !email || !password || !age) {
         return done(null, false);
       }
       try {
         const hashPassword = await hashData(password);
+        const token = generateToken({ first_name, last_name, email, role });
         const userCreated = await usersManager.createOne({
           ...req.body,
           password: hashPassword,
         });
+
         done(null, userCreated);
       } catch (error) {
         done(error);
@@ -54,8 +57,8 @@ passport.use(
 
         const sessionInfo =
           email === "adminCoder@coder.com"
-            ? { email, first_name: user.first_name, role: "admin" }
-            : { email, first_name: user.first_name, role: "user" };
+            ? { email, first_name: user.first_name, role: "ADMIN" }
+            : { email, first_name: user.first_name, role: "USER" };
         req.session.user = sessionInfo;
         done(null, user);
       } catch (error) {
@@ -150,7 +153,7 @@ passport.use(
   )
 );
 
-const fromCookies = (req) => {
+const current = (req) => {
   return req.cookies.token;
 };
 
@@ -160,14 +163,11 @@ passport.use(
   "jwt",
   new JWTStrategy(
     {
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: "secretJWT",
+      jwtFromRequest: ExtractJwt.fromExtractors([current]),
     },
     async (jwt_payload, done) => {
-      try {
-      } catch (error) {
-        done(error);
-      }
+      done(null, jwt_payload);
     }
   )
 );

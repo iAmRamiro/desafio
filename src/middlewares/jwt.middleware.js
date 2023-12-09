@@ -21,7 +21,6 @@ const SECRET_KEY_JWT = "secretJWT";
 export const jwtValidation = (req, res, next) => {
   try {
     const token = req.cookies.token;
-
     //decodificar
     const userToken = jwt.verify(token, SECRET_KEY_JWT);
     req.user = userToken;
